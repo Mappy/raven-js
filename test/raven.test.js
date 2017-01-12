@@ -1364,7 +1364,7 @@ describe('Raven (public API)', function() {
 
             Raven.afterLoad();
 
-            assert.equal(Raven._globalEndpoint, 'http://some.other.server:80/api/store/');
+            assert.equal(Raven._globalEndpoint, 'http://some.other.server:80/2/');
 
             assert.equal(Raven._globalOptions.some, 'config');
 
@@ -1380,7 +1380,7 @@ describe('Raven (public API)', function() {
             Raven.config('//def@lol.com/3');
             Raven.setDSN(SENTRY_DSN)
 
-            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/store/');
+            assert.equal(Raven._globalEndpoint, 'http://example.com:80/2/');
         });
     });
 
@@ -1388,32 +1388,21 @@ describe('Raven (public API)', function() {
         it('should work with a DSN', function() {
             assert.equal(Raven, Raven.config(SENTRY_DSN, {foo: 'bar'}), 'it should return Raven');
 
-            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/store/');
+            assert.equal(Raven._globalEndpoint, 'http://example.com:80/2/');
             assert.equal(Raven._globalOptions.foo, 'bar');
-            assert.isTrue(Raven.isSetup());
-        });
-
-        it('will NOT throw an Error if the DSN contains a private/secret key AND allowSecretKey is true', function () {
-            assert.equal(
-                Raven,
-                Raven.config('http://abc:def@example.com:80/2', {allowSecretKey: true}),
-                'it should return Raven'
-            );
-
-            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/store/');
             assert.isTrue(Raven.isSetup());
         });
 
         it('should work with a protocol relative DSN', function() {
             Raven.config('//abc@example.com/2');
 
-            assert.equal(Raven._globalEndpoint, '//example.com/api/store/');
+            assert.equal(Raven._globalEndpoint, '//example.com/2/');
             assert.isTrue(Raven.isSetup());
         });
 
         it('should work should work at a non root path', function() {
             Raven.config('//abc@example.com/sentry/2');
-            assert.equal(Raven._globalEndpoint, '//example.com/sentry/api/store/');
+            assert.equal(Raven._globalEndpoint, '//example.com/sentry/2/');
             assert.isTrue(Raven.isSetup());
         });
 

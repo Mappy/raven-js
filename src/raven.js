@@ -182,16 +182,11 @@ Raven.prototype = {
      */
     setDSN: function(dsn) {
         var self = this,
-            uri = self._parseDSN(dsn),
-          lastSlash = uri.path.lastIndexOf('/'),
-          path = uri.path.substr(1, lastSlash);
+            uri = self._parseDSN(dsn);
 
         self._dsn = dsn;
-
         self._globalServer = self._getGlobalServer(uri);
-
-        self._globalEndpoint = self._globalServer +
-            '/' + path + 'api/store/';
+        self._globalEndpoint = self._globalServer + uri.path + '/';
     },
 
     /*

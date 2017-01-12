@@ -1,10 +1,10 @@
-/*! Raven.js 3.9.1 (7bbae7d) | github.com/getsentry/raven-js */
+/*! Raven.js 3.9.1 (982665c) | github.com/getsentry/raven-js */
 
 /*
  * Includes TraceKit
  * https://github.com/getsentry/TraceKit
  *
- * Copyright 2016 Matt Robenolt and other contributors
+ * Copyright 2017 Matt Robenolt and other contributors
  * Released under the BSD license
  * https://github.com/getsentry/raven-js/blob/master/LICENSE
  *
@@ -125,8 +125,6 @@ function Raven() {
     this._lastCapturedException = null;
     this._lastEventId = null;
     this._globalServer = null;
-    this._globalKey = null;
-    this._globalProject = null;
     this._globalContext = {};
     this._globalOptions = {
         logger: 'javascript',
@@ -278,19 +276,11 @@ Raven.prototype = {
      */
     setDSN: function(dsn) {
         var self = this,
-            uri = self._parseDSN(dsn),
-          lastSlash = uri.path.lastIndexOf('/'),
-          path = uri.path.substr(1, lastSlash);
+            uri = self._parseDSN(dsn);
 
         self._dsn = dsn;
-        self._globalKey = uri.user;
-        self._globalSecret = uri.pass && uri.pass.substr(1);
-        self._globalProject = uri.path.substr(lastSlash + 1);
-
         self._globalServer = self._getGlobalServer(uri);
-
-        self._globalEndpoint = self._globalServer +
-            '/' + path + 'api/' + self._globalProject + '/store/';
+        self._globalEndpoint = self._globalServer + uri.path + '/';
     },
 
     /*
@@ -726,41 +716,6 @@ Raven.prototype = {
         }
     },
 
-    showReportDialog: function (options) {
-        if (!_document) // doesn't work without a document (React native)
-            return;
-
-        options = options || {};
-
-        var lastEventId = options.eventId || this.lastEventId();
-        if (!lastEventId) {
-            throw new RavenConfigError('Missing eventId');
-        }
-
-        var dsn = options.dsn || this._dsn;
-        if (!dsn) {
-            throw new RavenConfigError('Missing DSN');
-        }
-
-        var encode = encodeURIComponent;
-        var qs = '';
-        qs += '?eventId=' + encode(lastEventId);
-        qs += '&dsn=' + encode(dsn);
-
-        var user = options.user || this._globalContext.user;
-        if (user) {
-            if (user.name)  qs += '&name=' + encode(user.name);
-            if (user.email) qs += '&email=' + encode(user.email);
-        }
-
-        var globalServer = this._getGlobalServer(this._parseDSN(dsn));
-
-        var script = _document.createElement('script');
-        script.async = true;
-        script.src = globalServer + '/api/embed/error-page/' + qs;
-        (_document.head || _document.body).appendChild(script);
-    },
-
     /**** Private functions ****/
     _ignoreNextOnError: function () {
         var self = this;
@@ -1056,15 +1011,11 @@ Raven.prototype = {
             var xhrproto = XMLHttpRequest.prototype;
             fill(xhrproto, 'open', function(origOpen) {
                 return function (method, url) { // preserve arity
-
-                    // if Sentry key appears in URL, don't capture
-                    if (isString(url) && url.indexOf(self._globalKey) === -1) {
-                        this.__raven_xhr = {
-                            method: method,
-                            url: url,
-                            status_code: null
-                        };
-                    }
+                    this.__raven_xhr = {
+                        method: method,
+                        url: url,
+                        status_code: null
+                    };
 
                     return origOpen.apply(this, arguments);
                 };
@@ -1249,10 +1200,6 @@ Raven.prototype = {
             throw new RavenConfigError('Invalid DSN: ' + str);
         }
 
-        if (dsn.pass && !this._globalOptions.allowSecretKey) {
-            throw new RavenConfigError('Do not specify your secret key in the DSN. See: http://bit.ly/raven-secret-key');
-        }
-
         return dsn;
     },
 
@@ -1419,7 +1366,6 @@ Raven.prototype = {
         var globalOptions = this._globalOptions;
 
         var baseData = {
-            project: this._globalProject,
             logger: globalOptions.logger,
             platform: 'javascript'
         }, httpData = this._getHttpData();
@@ -1503,13 +1449,8 @@ Raven.prototype = {
         if (!this.isSetup()) return;
 
         var auth = {
-            sentry_version: '7',
-            sentry_client: 'raven-js/' + this.VERSION,
-            sentry_key: this._globalKey
+            sentry_client: 'raven-js/' + this.VERSION
         };
-        if (this._globalSecret) {
-            auth.sentry_secret = this._globalSecret;
-        }
 
         var exception = data.exception && data.exception.values[0];
         this.captureBreadcrumb({
