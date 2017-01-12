@@ -217,16 +217,6 @@ describe('globals', function() {
             assert.strictEqual(pieces.host, 'matt-robenolt.com');
         });
 
-        it('should raise a RavenConfigError when setting a password', function() {
-            try {
-                Raven._parseDSN('http://user:pass@example.com/2');
-            } catch(e) {
-                return assert.equal(e.name, 'RavenConfigError');
-            }
-            // shouldn't hit this
-            assert.isTrue(false);
-        });
-
         it('should raise a RavenConfigError with an invalid DSN', function() {
             try {
                 Raven._parseDSN('lol');
@@ -1471,12 +1461,6 @@ describe('Raven (public API)', function() {
             assert.equal(Raven._globalOptions.foo, 'bar');
             assert.equal(Raven._globalProject, '2');
             assert.isTrue(Raven.isSetup());
-        });
-
-        it('throw an Error if the DSN contains a private/secret key', function () {
-            assert.throws(function () {
-                Raven.config('http://abc:def@example.com:80/2');
-            }, Error);
         });
 
         it('will NOT throw an Error if the DSN contains a private/secret key AND allowSecretKey is true', function () {

@@ -1114,10 +1114,6 @@ Raven.prototype = {
             throw new RavenConfigError('Invalid DSN: ' + str);
         }
 
-        if (dsn.pass && !this._globalOptions.allowSecretKey) {
-            throw new RavenConfigError('Do not specify your secret key in the DSN. See: http://bit.ly/raven-secret-key');
-        }
-
         return dsn;
     },
 
