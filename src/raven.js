@@ -1368,7 +1368,6 @@ Raven.prototype = {
         if (!this.isSetup()) return;
 
         var auth = {
-            sentry_version: '7',
             sentry_client: 'raven-js/' + this.VERSION
         };
         if (this._globalSecret) {
