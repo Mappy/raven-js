@@ -31,7 +31,6 @@ function Raven() {
     this._lastCapturedException = null;
     this._lastEventId = null;
     this._globalServer = null;
-    this._globalProject = null;
     this._globalContext = {};
     this._globalOptions = {
         logger: 'javascript',
@@ -188,12 +187,11 @@ Raven.prototype = {
           path = uri.path.substr(1, lastSlash);
 
         self._dsn = dsn;
-        self._globalProject = uri.path.substr(lastSlash + 1);
 
         self._globalServer = self._getGlobalServer(uri);
 
         self._globalEndpoint = self._globalServer +
-            '/' + path + 'api/' + self._globalProject + '/store/';
+            '/' + path + 'api/store/';
     },
 
     /*
@@ -1279,7 +1277,6 @@ Raven.prototype = {
         var globalOptions = this._globalOptions;
 
         var baseData = {
-            project: this._globalProject,
             logger: globalOptions.logger,
             platform: 'javascript'
         }, httpData = this._getHttpData();

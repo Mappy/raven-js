@@ -577,7 +577,6 @@ describe('globals', function() {
                 headers: {'User-Agent': 'lolbrowser'}
             });
 
-            Raven._globalProject = '2';
             Raven._globalOptions = {
                 logger: 'javascript',
                 maxMessageLength: 100
@@ -586,7 +585,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar'});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -660,7 +658,6 @@ describe('globals', function() {
                 headers: {'User-Agent': 'lolbrowser'}
             });
 
-            Raven._globalProject = '2';
             Raven._globalOptions = {
                 logger: 'javascript',
                 maxMessageLength: 100
@@ -669,7 +666,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar'});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -695,7 +691,6 @@ describe('globals', function() {
                 headers: {'User-Agent': 'lolbrowser'}
             });
 
-            Raven._globalProject = '2';
             Raven._globalOptions = {
                 logger: 'javascript',
                 maxMessageLength: 100
@@ -704,7 +699,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar', tags: {tag2: 'value2'}});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -737,7 +731,6 @@ describe('globals', function() {
                 headers: {'User-Agent': 'lolbrowser'}
             });
 
-            Raven._globalProject = '2';
             Raven._globalOptions = {
                 logger: 'javascript',
                 maxMessageLength: 100
@@ -746,7 +739,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar', extra: {key2: 'value2'}});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -799,7 +791,6 @@ describe('globals', function() {
                 headers: {'User-Agent': 'lolbrowser'}
             });
 
-            Raven._globalProject = '2';
             Raven._globalOptions = {
                 logger: 'javascript',
                 maxMessageLength: 100,
@@ -810,7 +801,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar'});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -834,7 +824,6 @@ describe('globals', function() {
             });
 
             Raven._globalOptions = {
-                projectId: 2,
                 logger: 'javascript',
                 maxMessageLength: 100,
                 tags: {}
@@ -842,7 +831,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar', tags: {}, extra: {}});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -866,7 +854,6 @@ describe('globals', function() {
             });
 
             Raven._globalOptions = {
-                projectId: 2,
                 logger: 'javascript',
                 maxMessageLength: 100,
                 environment: 'abc123'
@@ -874,7 +861,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar'});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 environment: 'abc123',
                 logger: 'javascript',
                 platform: 'javascript',
@@ -899,7 +885,6 @@ describe('globals', function() {
             });
 
             Raven._globalOptions = {
-                projectId: 2,
                 logger: 'javascript',
                 maxMessageLength: 100,
                 release: 'abc123'
@@ -907,7 +892,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar'});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 release: 'abc123',
                 logger: 'javascript',
                 platform: 'javascript',
@@ -932,7 +916,6 @@ describe('globals', function() {
             });
 
             Raven._globalOptions = {
-                projectId: 2,
                 logger: 'javascript',
                 maxMessageLength: 100,
                 serverName: 'abc123',
@@ -940,7 +923,6 @@ describe('globals', function() {
 
             Raven._send({message: 'bar'});
             assert.deepEqual(Raven._makeRequest.lastCall.args[0].data, {
-                project: '2',
                 server_name: 'abc123',
                 logger: 'javascript',
                 platform: 'javascript',
@@ -965,7 +947,6 @@ describe('globals', function() {
             });
 
             var globalOptions = {
-                projectId: 2,
                 logger: 'javascript',
                 maxMessageLength: 100,
                 release: 'abc123',
@@ -979,7 +960,6 @@ describe('globals', function() {
             var opts = args[0];
             assert.equal(opts.url, 'http://localhost/store/');
             assert.deepEqual(opts.data, {
-                project: '2',
                 release: 'abc123',
                 logger: 'javascript',
                 platform: 'javascript',
@@ -1014,12 +994,10 @@ describe('globals', function() {
                 transport: sinon.stub()
             };
 
-            Raven._globalProject = '2';
             Raven._globalOptions = globalOptions;
 
             Raven._send({message: 'bar'});
             assert.deepEqual(globalOptions.transport.lastCall.args[0].data, {
-                project: '2',
                 logger: 'javascript',
                 platform: 'javascript',
                 request: {
@@ -1386,10 +1364,9 @@ describe('Raven (public API)', function() {
 
             Raven.afterLoad();
 
-            assert.equal(Raven._globalEndpoint, 'http://some.other.server:80/api/2/store/');
+            assert.equal(Raven._globalEndpoint, 'http://some.other.server:80/api/store/');
 
             assert.equal(Raven._globalOptions.some, 'config');
-            assert.equal(Raven._globalProject, '2');
 
             assert.isTrue(Raven.isSetup.calledOnce);
             assert.isFalse(TraceKit.report.subscribe.calledOnce);
@@ -1403,8 +1380,7 @@ describe('Raven (public API)', function() {
             Raven.config('//def@lol.com/3');
             Raven.setDSN(SENTRY_DSN)
 
-            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
-            assert.equal(Raven._globalProject, '2');
+            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/store/');
         });
     });
 
@@ -1412,9 +1388,8 @@ describe('Raven (public API)', function() {
         it('should work with a DSN', function() {
             assert.equal(Raven, Raven.config(SENTRY_DSN, {foo: 'bar'}), 'it should return Raven');
 
-            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
+            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/store/');
             assert.equal(Raven._globalOptions.foo, 'bar');
-            assert.equal(Raven._globalProject, '2');
             assert.isTrue(Raven.isSetup());
         });
 
@@ -1425,23 +1400,20 @@ describe('Raven (public API)', function() {
                 'it should return Raven'
             );
 
-            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
-            assert.equal(Raven._globalProject, '2');
+            assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/store/');
             assert.isTrue(Raven.isSetup());
         });
 
         it('should work with a protocol relative DSN', function() {
             Raven.config('//abc@example.com/2');
 
-            assert.equal(Raven._globalEndpoint, '//example.com/api/2/store/');
-            assert.equal(Raven._globalProject, '2');
+            assert.equal(Raven._globalEndpoint, '//example.com/api/store/');
             assert.isTrue(Raven.isSetup());
         });
 
         it('should work should work at a non root path', function() {
             Raven.config('//abc@example.com/sentry/2');
-            assert.equal(Raven._globalEndpoint, '//example.com/sentry/api/2/store/');
-            assert.equal(Raven._globalProject, '2');
+            assert.equal(Raven._globalEndpoint, '//example.com/sentry/api/store/');
             assert.isTrue(Raven.isSetup());
         });
 
