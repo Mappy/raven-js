@@ -64,7 +64,3 @@ Raven.setDataCallback(function (data: any) {});
 Raven.setDataCallback(function (data: any, original: any) {});
 Raven.setShouldSendCallback(function (data: any) {});
 Raven.setShouldSendCallback(function (data: any, original: any) {});
-
-Raven.showReportDialog({
-    eventId: 'abcdef123456'
-});

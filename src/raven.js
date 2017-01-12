@@ -632,41 +632,6 @@ Raven.prototype = {
         }
     },
 
-    showReportDialog: function (options) {
-        if (!_document) // doesn't work without a document (React native)
-            return;
-
-        options = options || {};
-
-        var lastEventId = options.eventId || this.lastEventId();
-        if (!lastEventId) {
-            throw new RavenConfigError('Missing eventId');
-        }
-
-        var dsn = options.dsn || this._dsn;
-        if (!dsn) {
-            throw new RavenConfigError('Missing DSN');
-        }
-
-        var encode = encodeURIComponent;
-        var qs = '';
-        qs += '?eventId=' + encode(lastEventId);
-        qs += '&dsn=' + encode(dsn);
-
-        var user = options.user || this._globalContext.user;
-        if (user) {
-            if (user.name)  qs += '&name=' + encode(user.name);
-            if (user.email) qs += '&email=' + encode(user.email);
-        }
-
-        var globalServer = this._getGlobalServer(this._parseDSN(dsn));
-
-        var script = _document.createElement('script');
-        script.async = true;
-        script.src = globalServer + '/api/embed/error-page/' + qs;
-        (_document.head || _document.body).appendChild(script);
-    },
-
     /**** Private functions ****/
     _ignoreNextOnError: function () {
         var self = this;
