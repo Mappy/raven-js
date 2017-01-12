@@ -1005,7 +1005,6 @@ describe('globals', function() {
             });
             assert.deepEqual(opts.auth, {
                 sentry_client: 'raven-js/3.9.1',
-                sentry_key: 'abc',
                 sentry_version: '7'
             });
             assert.deepEqual(opts.options, globalOptions);
@@ -1052,7 +1051,6 @@ describe('globals', function() {
             });
             assert.deepEqual(opts.auth, {
                 sentry_client: 'raven-js/3.9.1',
-                sentry_key: 'abc',
                 sentry_secret: 'def',
                 sentry_version: '7'
             });
@@ -1443,7 +1441,6 @@ describe('Raven (public API)', function() {
 
             Raven.afterLoad();
 
-            assert.equal(Raven._globalKey, 'random');
             assert.equal(Raven._globalEndpoint, 'http://some.other.server:80/api/2/store/');
 
             assert.equal(Raven._globalOptions.some, 'config');
@@ -1461,7 +1458,6 @@ describe('Raven (public API)', function() {
             Raven.config('//def@lol.com/3');
             Raven.setDSN(SENTRY_DSN)
 
-            assert.equal(Raven._globalKey, 'abc');
             assert.equal(Raven._globalSecret, '');
             assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
             assert.equal(Raven._globalProject, '2');
@@ -1472,7 +1468,6 @@ describe('Raven (public API)', function() {
         it('should work with a DSN', function() {
             assert.equal(Raven, Raven.config(SENTRY_DSN, {foo: 'bar'}), 'it should return Raven');
 
-            assert.equal(Raven._globalKey, 'abc');
             assert.equal(Raven._globalSecret, '');
             assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
             assert.equal(Raven._globalOptions.foo, 'bar');
@@ -1493,7 +1488,6 @@ describe('Raven (public API)', function() {
                 'it should return Raven'
             );
 
-            assert.equal(Raven._globalKey, 'abc');
             assert.equal(Raven._globalSecret, 'def');
             assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
             assert.equal(Raven._globalProject, '2');
@@ -1503,7 +1497,6 @@ describe('Raven (public API)', function() {
         it('should work with a protocol relative DSN', function() {
             Raven.config('//abc@example.com/2');
 
-            assert.equal(Raven._globalKey, 'abc');
             assert.equal(Raven._globalEndpoint, '//example.com/api/2/store/');
             assert.equal(Raven._globalProject, '2');
             assert.isTrue(Raven.isSetup());
@@ -1511,7 +1504,6 @@ describe('Raven (public API)', function() {
 
         it('should work should work at a non root path', function() {
             Raven.config('//abc@example.com/sentry/2');
-            assert.equal(Raven._globalKey, 'abc');
             assert.equal(Raven._globalEndpoint, '//example.com/sentry/api/2/store/');
             assert.equal(Raven._globalProject, '2');
             assert.isTrue(Raven.isSetup());

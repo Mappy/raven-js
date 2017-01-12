@@ -414,26 +414,6 @@ describe('integration', function () {
             );
         });
 
-        it('should NOT denote XMLHttpRequests to the Sentry store endpoint as requiring breadcrumb capture', function (done) {
-            var iframe = this.iframe;
-            iframeExecute(iframe, done,
-              function () {
-                  var xhr = new XMLHttpRequest();
-                  xhr.open('GET', 'http://example.com/api/1/store/?sentry_key=public');
-
-                  // can't actually transmit an XHR (breadcrumb isnt recorded until
-                  // onreadystatechange fires), so enough to just verify that
-                  // __raven_xhr wasn't set on xhr object
-
-                  window.ravenData = xhr.hasOwnProperty('__raven_xhr');
-                  setTimeout(done);
-              },
-              function () {
-                  assert.isFalse(iframe.contentWindow.ravenData);
-              }
-            );
-        });
-
         it('should record a fetch request', function (done) {
             var iframe = this.iframe;
 

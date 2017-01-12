@@ -31,7 +31,6 @@ function Raven() {
     this._lastCapturedException = null;
     this._lastEventId = null;
     this._globalServer = null;
-    this._globalKey = null;
     this._globalProject = null;
     this._globalContext = {};
     this._globalOptions = {
@@ -189,7 +188,6 @@ Raven.prototype = {
           path = uri.path.substr(1, lastSlash);
 
         self._dsn = dsn;
-        self._globalKey = uri.user;
         self._globalSecret = uri.pass && uri.pass.substr(1);
         self._globalProject = uri.path.substr(lastSlash + 1);
 
@@ -927,15 +925,11 @@ Raven.prototype = {
             var xhrproto = XMLHttpRequest.prototype;
             fill(xhrproto, 'open', function(origOpen) {
                 return function (method, url) { // preserve arity
-
-                    // if Sentry key appears in URL, don't capture
-                    if (isString(url) && url.indexOf(self._globalKey) === -1) {
-                        this.__raven_xhr = {
-                            method: method,
-                            url: url,
-                            status_code: null
-                        };
-                    }
+                    this.__raven_xhr = {
+                        method: method,
+                        url: url,
+                        status_code: null
+                    };
 
                     return origOpen.apply(this, arguments);
                 };
@@ -1375,8 +1369,7 @@ Raven.prototype = {
 
         var auth = {
             sentry_version: '7',
-            sentry_client: 'raven-js/' + this.VERSION,
-            sentry_key: this._globalKey
+            sentry_client: 'raven-js/' + this.VERSION
         };
         if (this._globalSecret) {
             auth.sentry_secret = this._globalSecret;
