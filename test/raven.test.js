@@ -1001,49 +1001,6 @@ describe('globals', function() {
             assert.isFunction(opts.onError);
         });
 
-        it('should pass sentry_secret as part of auth params if specified', function () {
-            this.sinon.stub(Raven, 'isSetup').returns(true);
-            this.sinon.stub(Raven, '_makeRequest');
-            this.sinon.stub(Raven, '_getHttpData').returns({
-                url: 'http://localhost/?a=b',
-                headers: {'User-Agent': 'lolbrowser'}
-            });
-
-            Raven._globalEndpoint = 'http://localhost/store/';
-            Raven._globalOptions = {
-                projectId: 2,
-                logger: 'javascript',
-                maxMessageLength: 100,
-                release: 'abc123'
-            };;
-            Raven._globalSecret = 'def'; // <-- secret
-
-            Raven._send({message: 'bar'});
-            var args = Raven._makeRequest.lastCall.args;
-            assert.equal(args.length, 1);
-            var opts = args[0];
-            assert.equal(opts.url, 'http://localhost/store/');
-            assert.deepEqual(opts.data, {
-                project: '2',
-                release: 'abc123',
-                logger: 'javascript',
-                platform: 'javascript',
-                request: {
-                    url: 'http://localhost/?a=b',
-                    headers: {
-                        'User-Agent': 'lolbrowser'
-                    }
-                },
-                event_id: 'abc123',
-                message: 'bar',
-                extra: {'session:duration': 100},
-            });
-            assert.deepEqual(opts.auth, {
-                sentry_client: 'raven-js/3.9.1',
-                sentry_secret: 'def'
-            });
-        });
-
         it('should call globalOptions.transport if specified', function() {
             this.sinon.stub(Raven, 'isSetup').returns(true);
             this.sinon.stub(Raven, '_getHttpData').returns({
@@ -1446,7 +1403,6 @@ describe('Raven (public API)', function() {
             Raven.config('//def@lol.com/3');
             Raven.setDSN(SENTRY_DSN)
 
-            assert.equal(Raven._globalSecret, '');
             assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
             assert.equal(Raven._globalProject, '2');
         });
@@ -1456,7 +1412,6 @@ describe('Raven (public API)', function() {
         it('should work with a DSN', function() {
             assert.equal(Raven, Raven.config(SENTRY_DSN, {foo: 'bar'}), 'it should return Raven');
 
-            assert.equal(Raven._globalSecret, '');
             assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
             assert.equal(Raven._globalOptions.foo, 'bar');
             assert.equal(Raven._globalProject, '2');
@@ -1470,7 +1425,6 @@ describe('Raven (public API)', function() {
                 'it should return Raven'
             );
 
-            assert.equal(Raven._globalSecret, 'def');
             assert.equal(Raven._globalEndpoint, 'http://example.com:80/api/2/store/');
             assert.equal(Raven._globalProject, '2');
             assert.isTrue(Raven.isSetup());

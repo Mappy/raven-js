@@ -188,7 +188,6 @@ Raven.prototype = {
           path = uri.path.substr(1, lastSlash);
 
         self._dsn = dsn;
-        self._globalSecret = uri.pass && uri.pass.substr(1);
         self._globalProject = uri.path.substr(lastSlash + 1);
 
         self._globalServer = self._getGlobalServer(uri);
@@ -1366,9 +1365,6 @@ Raven.prototype = {
         var auth = {
             sentry_client: 'raven-js/' + this.VERSION
         };
-        if (this._globalSecret) {
-            auth.sentry_secret = this._globalSecret;
-        }
 
         var exception = data.exception && data.exception.values[0];
         this.captureBreadcrumb({
